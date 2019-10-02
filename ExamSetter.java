@@ -1,8 +1,16 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Scanner;
 import java.util.Vector;
 
-public class ExamSetter {
+public class ExamSetter implements Serializable{
 
+	private static final long serialVersionUID = 5940166290730324489L;
 	private Vector<ExamPaper> setOfPapers = new Vector<ExamPaper>();
 
 	public ExamSetter() {
@@ -16,10 +24,61 @@ public class ExamSetter {
 		}
 		return str.toString();
 	}
-
+	
 	// to view particular Question Paper
 	public void viewPaper(int index) {
 		System.out.println(setOfPapers.get(index - 1));
+	}
+	
+	// reset papers while loading previous changes
+	private void resetPapers(ExamSetter examPapers) {
+		this.setOfPapers = examPapers.setOfPapers;
+	}
+
+	// load previous changes
+	boolean loadChanges() {
+		
+		ObjectInputStream objectInputStream = null;
+		FileInputStream fileInputStream = null;
+		String fileName = "Papers.txt";
+		ExamSetter examPapers;
+		
+		try {
+			fileInputStream = new FileInputStream(fileName);
+			objectInputStream = new ObjectInputStream(fileInputStream);
+			examPapers = (ExamSetter)objectInputStream.readObject();
+			resetPapers(examPapers);
+			return true;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	// save changes permanently
+	boolean commitChanges() {
+		
+		ObjectOutputStream objectOutputStream = null;
+		FileOutputStream fileOutputStream = null;
+		String fileName = "Papers.txt";
+		
+		try {
+			fileOutputStream = new FileOutputStream(fileName);
+			objectOutputStream = new ObjectOutputStream(fileOutputStream);
+			objectOutputStream.writeObject(this);
+			return true;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	// Main Serving Method
@@ -35,6 +94,8 @@ public class ExamSetter {
 			System.out.println("Press 3 to view list Question Papers");
 			System.out.println("Press 4 to view full Question Paper");
 //			System.out.println("Press 5 to edit Question Paper");
+			System.out.println("Press 6 to Load Previous Changes");
+			System.out.println("Press 7 to Commit Changes");
 
 			System.out.println("Press 0 to exit !");
 			System.out.println("Enter your choice: ");
@@ -64,7 +125,18 @@ public class ExamSetter {
 				viewPaper(viewIndex);
 				break;
 			case 5:
-				chooseExamPaper();
+				break;
+			case 6:
+				if (loadChanges())
+					System.out.println("Loaded Previous changes Sucessfully !");
+				else
+					System.out.println("Loading Failed !");
+				break;
+			case 7:
+				if (commitChanges())
+					System.out.println("Committed changes Sucessfully !");
+				else
+					System.out.println("Commit Failed !");
 				break;
 			case 0:
 				System.exit(0);
@@ -73,42 +145,6 @@ public class ExamSetter {
 				break;
 			}
 		} while (true);
-	}
-
-	// to choose which exam paper to attend
-	public void chooseExamPaper() {
-		Scanner sc = new Scanner(System.in);
-		int choosePaper;
-
-		for (int i = 0; i < setOfPapers.size(); i++) {
-			if (setOfPapers.get(i).isActive())
-				System.out.println("Paper " + (setOfPapers.indexOf(setOfPapers.get(i)) + 1) + ": "
-						+ setOfPapers.get(i).getQuestionPaperName() + "\n");
-		}
-		System.out.println("Choose from available Papers: ");
-		choosePaper = sc.nextInt();
-		attendExam(choosePaper - 1);
-	}
-
-	// to take exam of particular paper by One-by-One questions
-	public void attendExam(int paperNumber) {
-		if (setOfPapers.get(paperNumber).isActive()) {
-			ExamPaper paper = setOfPapers.get(paperNumber);
-			Vector<Integer> answers = new Vector<Integer>();
-			Scanner sc = new Scanner(System.in);
-			int answer;
-
-			for (int i = 0; i < paper.getQuestionPaperSize(); i++) {
-				System.out.println("Que " + (i + 1) + ". " + paper.getQuestion(i));
-				System.out.println("Enter your Answer: ");
-				answer = sc.nextInt();
-				answers.add(answer);
-			}
-			answer = paper.checkPaper(answers);
-			System.out.println("Your score is: " + answer);
-		} else {
-			System.out.println("Invalid Choice !");
-		}
 	}
 
 	public static void main(String[] args) {
