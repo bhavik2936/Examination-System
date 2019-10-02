@@ -8,14 +8,16 @@ import java.io.Serializable;
 import java.util.Scanner;
 import java.util.Vector;
 
-public class ExamSetter implements Serializable{
+public class ExamSetter implements Serializable {
 
 	private static final long serialVersionUID = 5940166290730324489L;
 	private Vector<ExamPaper> setOfPapers = new Vector<ExamPaper>();
 
+	// Defalut Constructor
 	public ExamSetter() {
 	}
 
+	// To print Names of all Question Papers
 	@Override
 	public String toString() {
 		StringBuffer str = new StringBuffer("");
@@ -24,61 +26,105 @@ public class ExamSetter implements Serializable{
 		}
 		return str.toString();
 	}
+
+	// to print total number of Question Papes
+	int getCountOfPapers() {
+		return setOfPapers.size();
+	}
 	
+	// add Paper as an Object
+	void addPaper(ExamPaper examPaper) {
+		setOfPapers.add(examPaper);
+	}
+
 	// to view particular Question Paper
 	public void viewPaper(int index) {
 		System.out.println(setOfPapers.get(index - 1));
 	}
-	
+
 	// reset papers while loading previous changes
 	private void resetPapers(ExamSetter examPapers) {
 		this.setOfPapers = examPapers.setOfPapers;
 	}
+	
+	// get different paper for client
+	ExamSetter getClientPaper() {
+		ExamSetter clientPaper = new ExamSetter();
+		for (int i=0; i<setOfPapers.size(); i++) {
+			if (setOfPapers.get(i).isActive())
+				clientPaper.addPaper(setOfPapers.get(i));
+		}
+		return clientPaper;
+	}
 
 	// load previous changes
 	boolean loadChanges() {
-		
-		ObjectInputStream objectInputStream = null;
-		FileInputStream fileInputStream = null;
-		String fileName = "Papers.txt";
-		ExamSetter examPapers;
-		
-		try {
-			fileInputStream = new FileInputStream(fileName);
-			objectInputStream = new ObjectInputStream(fileInputStream);
-			examPapers = (ExamSetter)objectInputStream.readObject();
-			resetPapers(examPapers);
-			return true;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
+		Scanner sc = new Scanner(System.in);
+
+		System.out.println("Are you sure want to Load Previous Changes ?");
+		System.out.println("All the current changes will be delted !");
+		System.out.println("Please enter 'Y' to proceed and 'N' to abort.");
+		char ch = sc.next().charAt(0);
+
+		if (ch == 'Y' || ch == 'y') {
+			ObjectInputStream objectInputStream = null;
+			FileInputStream fileInputStream = null;
+			String fileName = "./AdminPapers.dat";
+			ExamSetter examPapers;
+
+			try {
+				fileInputStream = new FileInputStream(fileName);
+				objectInputStream = new ObjectInputStream(fileInputStream);
+				examPapers = (ExamSetter) objectInputStream.readObject();
+				resetPapers(examPapers);
+				return true;
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return false;
+		} else {
+			return false;
 		}
-		return false;
 	}
-	
+
 	// save changes permanently
 	boolean commitChanges() {
-		
-		ObjectOutputStream objectOutputStream = null;
-		FileOutputStream fileOutputStream = null;
-		String fileName = "Papers.txt";
-		
-		try {
-			fileOutputStream = new FileOutputStream(fileName);
-			objectOutputStream = new ObjectOutputStream(fileOutputStream);
-			objectOutputStream.writeObject(this);
-			return true;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
+		Scanner sc = new Scanner(System.in);
+
+		System.out.println("Are you sure want to Commit ?");
+		System.out.println("Any Saved data will be Overrided !");
+		System.out.println("Please enter 'Y' to proceed and 'N' to abort.");
+		char ch = sc.next().charAt(0);
+
+		if (ch == 'Y' || ch == 'y') {
+			FileOutputStream fileOutputStream = null;
+			ObjectOutputStream objectOutputStream = null;
+			String adminFileName = "./AdminPapers.dat";
+			String clientFileName = "./QuestionPapers.dat";
+
+			try {
+				fileOutputStream = new FileOutputStream(adminFileName);
+				objectOutputStream = new ObjectOutputStream(fileOutputStream);
+				objectOutputStream.writeObject(this);
+				fileOutputStream = new FileOutputStream(clientFileName);
+				objectOutputStream = new ObjectOutputStream(fileOutputStream);
+				objectOutputStream.writeObject(getClientPaper());
+				return true;
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return false;
+		} else {
+			return false;
 		}
-		return false;
 	}
 
 	// Main Serving Method
@@ -99,7 +145,6 @@ public class ExamSetter implements Serializable{
 
 			System.out.println("Press 0 to exit !");
 			System.out.println("Enter your choice: ");
-
 			choice = sc.nextInt();
 
 			switch (choice) {
@@ -116,13 +161,21 @@ public class ExamSetter implements Serializable{
 				System.out.println("Paper Removed Sucessfully !");
 				break;
 			case 3:
-				System.out.println(this);
+				if (getCountOfPapers() > 0) {
+					System.out.println(this);
+				} else {
+					System.out.println("No Question Paper Exists till now !");
+				}
 				break;
 			case 4:
-				System.out.println(this);
-				System.out.println("Enter which question Paper to view: ");
-				viewIndex = sc.nextInt();
-				viewPaper(viewIndex);
+				if (getCountOfPapers() > 0) {
+					System.out.println(this);
+					System.out.println("Enter which question Paper to view: ");
+					viewIndex = sc.nextInt();
+					viewPaper(viewIndex);
+				} else {
+					System.out.println("No Question Paper Exists till now !");
+				}
 				break;
 			case 5:
 				break;
