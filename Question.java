@@ -29,6 +29,11 @@ public class Question implements Serializable {
 		}
 		return str.toString();
 	}
+	
+	// to get correct choice of an question
+	int getCorrectChoice () {
+		return correctChoice;
+	}
 
 	// Modify Question by passed parameters with custom choice
 	public void modifyQuestion(String question, String[] options, int correctChoice) {
