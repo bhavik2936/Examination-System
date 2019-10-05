@@ -4,57 +4,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.Scanner;
-import java.util.Vector;
 
-public class ExamSetter implements Serializable {
+public class ExamSetter {
 
-	private static final long serialVersionUID = 5940166290730324489L;
-	private Vector<ExamPaper> setOfPapers = new Vector<ExamPaper>();
+	ListOfPapers papers;
 
-	// Defalut Constructor
+	// Default Constructor
 	public ExamSetter() {
-	}
-
-	// To print Names of all Question Papers
-	@Override
-	public String toString() {
-		StringBuffer str = new StringBuffer("");
-		for (int i = 0; i < setOfPapers.size(); i++) {
-			str.append("Paper " + (i + 1) + ": " + setOfPapers.get(i).getQuestionPaperName() + "\n");
-		}
-		return str.toString();
-	}
-
-	// to print total number of Question Papes
-	int getCountOfPapers() {
-		return setOfPapers.size();
-	}
-	
-	// add Paper as an Object
-	void addPaper(ExamPaper examPaper) {
-		setOfPapers.add(examPaper);
-	}
-
-	// to view particular Question Paper
-	public void viewPaper(int index) {
-		System.out.println(setOfPapers.get(index - 1));
-	}
-
-	// reset papers while loading previous changes
-	private void resetPapers(ExamSetter examPapers) {
-		this.setOfPapers = examPapers.setOfPapers;
-	}
-	
-	// get different paper for client
-	ExamSetter getClientPaper() {
-		ExamSetter clientPaper = new ExamSetter();
-		for (int i=0; i<setOfPapers.size(); i++) {
-			if (setOfPapers.get(i).isActive())
-				clientPaper.addPaper(setOfPapers.get(i));
-		}
-		return clientPaper;
+		papers = new ListOfPapers();
 	}
 
 	// load previous changes
@@ -70,13 +28,13 @@ public class ExamSetter implements Serializable {
 			ObjectInputStream objectInputStream = null;
 			FileInputStream fileInputStream = null;
 			String fileName = "./AdminPapers.dat";
-			ExamSetter examPapers;
+			ListOfPapers examPapers;
 
 			try {
 				fileInputStream = new FileInputStream(fileName);
 				objectInputStream = new ObjectInputStream(fileInputStream);
-				examPapers = (ExamSetter) objectInputStream.readObject();
-				resetPapers(examPapers);
+				examPapers = (ListOfPapers) objectInputStream.readObject();
+				papers.resetPapers(examPapers);
 				return true;
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -84,6 +42,13 @@ public class ExamSetter implements Serializable {
 				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
+			} finally {
+				try {
+					fileInputStream.close();
+					objectInputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 			return false;
 		} else {
@@ -109,10 +74,14 @@ public class ExamSetter implements Serializable {
 			try {
 				fileOutputStream = new FileOutputStream(adminFileName);
 				objectOutputStream = new ObjectOutputStream(fileOutputStream);
-				objectOutputStream.writeObject(this);
+				objectOutputStream.writeObject(papers);
+				
+				fileOutputStream.close();
+				objectOutputStream.close();
+
 				fileOutputStream = new FileOutputStream(clientFileName);
 				objectOutputStream = new ObjectOutputStream(fileOutputStream);
-				objectOutputStream.writeObject(getClientPaper());
+				objectOutputStream.writeObject(papers.getClientPaper());
 				return true;
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -120,6 +89,13 @@ public class ExamSetter implements Serializable {
 				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
+			} finally {
+				try {
+					fileOutputStream.close();
+					objectOutputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 			return false;
 		} else {
@@ -151,28 +127,28 @@ public class ExamSetter implements Serializable {
 			case 1:
 				System.out.println("Enter Exam Paper Name: ");
 				sc.skip("[\\r\\n]+");
-				setOfPapers.add(new ExamPaper(sc.nextLine()));
+				papers.addPaper(new ExamPaper(sc.nextLine()));
 				break;
 			case 2:
 				System.out.println(this);
 				System.out.println("Enter which question Paper to remove: ");
 				removeIndex = sc.nextInt();
-				setOfPapers.remove(removeIndex - 1);
+				papers.removePaper(removeIndex - 1);
 				System.out.println("Paper Removed Sucessfully !");
 				break;
 			case 3:
-				if (getCountOfPapers() > 0) {
-					System.out.println(this);
+				if (papers.getCountOfPapers() > 0) {
+					System.out.println(papers);
 				} else {
 					System.out.println("No Question Paper Exists till now !");
 				}
 				break;
 			case 4:
-				if (getCountOfPapers() > 0) {
-					System.out.println(this);
+				if (papers.getCountOfPapers() > 0) {
+					System.out.println(papers);
 					System.out.println("Enter which question Paper to view: ");
 					viewIndex = sc.nextInt();
-					viewPaper(viewIndex);
+					System.out.println(papers.getPaper(viewIndex - 1));
 				} else {
 					System.out.println("No Question Paper Exists till now !");
 				}
@@ -202,7 +178,6 @@ public class ExamSetter implements Serializable {
 
 	public static void main(String[] args) {
 
-		ExamSetter obj = new ExamSetter();
-		obj.serve();
+		new ExamSetter().serve();
 	}
 }

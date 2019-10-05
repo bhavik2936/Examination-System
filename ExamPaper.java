@@ -2,7 +2,7 @@ import java.io.Serializable;
 import java.util.Scanner;
 import java.util.Vector;
 
-public class ExamPaper implements Serializable {
+public class ExamPaper extends Question implements Serializable {
 
 	private boolean isActive = true;
 	private StringBuffer paperName;
