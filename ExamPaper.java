@@ -11,7 +11,7 @@ public class ExamPaper extends Question implements Serializable {
 	// Default Constructor
 	public ExamPaper() {
 	}
-	
+
 	// set Paper using Interactive way
 	public ExamPaper(String paperName) {
 		this.paperName = new StringBuffer(paperName);
@@ -36,17 +36,17 @@ public class ExamPaper extends Question implements Serializable {
 		}
 		return str.toString();
 	}
-	
+
 	// gets Question Paper Name
 	public String getQuestionPaperName() {
 		return paperName.toString();
 	}
-	
+
 	// is Paper to be shown or not
 	public boolean isActive() {
 		return isActive;
 	}
-	
+
 	// gets size of Paper in form of total Questions
 	public int getQuestionPaperSize() {
 		return setOfQuestions.size();
@@ -58,13 +58,13 @@ public class ExamPaper extends Question implements Serializable {
 
 		System.out.println("Enter the number of questions you want to add: ");
 		int size = sc.nextInt();
-		
+
 		for (int i = 0; i < size; i++) {
-			System.out.println("Question: " + (i+1));
+			System.out.println("Question: " + (i + 1));
 			addQuestion();
 		}
 	}
-	
+
 	// gets particular Question of Paper
 	Question getQuestion(int index) {
 		return setOfQuestions.get(index);
@@ -123,13 +123,13 @@ public class ExamPaper extends Question implements Serializable {
 		int correctChoice = 0;
 		question.modifyQuestion(ques, options, correctChoice);
 	}
-	
+
 	// to take and verify the answers
 	int checkPaper(Vector<Integer> answers) {
 		int marks = 0;
-		for (int i=0; i<setOfQuestions.size(); i++) {
+		for (int i = 0; i < setOfQuestions.size(); i++) {
 			if (setOfQuestions.get(i).getCorrectChoice() == answers.get(i))
-				marks ++;
+				marks++;
 		}
 		return marks;
 	}

@@ -1,7 +1,10 @@
+import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Date;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
@@ -27,17 +30,18 @@ public class Server {
 				System.out.println("Waiting for client to connect from " + new Date());
 				s = server.accept();
 				System.out.println("New client connected at " + new Date());
-				
+
 				objos = new ObjectOutputStream(s.getOutputStream());
 				AttendExam attendExam = new AttendExam();
-//				attendExam.chooseExamPaper();
 				objos.writeObject(attendExam);
+			} catch (BindException e) {
+				e.printStackTrace();
+				System.exit(0);
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-//			ServeClient sc = new ServeClient(s);
 		}
 	}
 }

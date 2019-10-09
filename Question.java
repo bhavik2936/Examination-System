@@ -29,9 +29,9 @@ public class Question implements Serializable {
 		}
 		return str.toString();
 	}
-	
+
 	// to get correct choice of an question
-	int getCorrectChoice () {
+	int getCorrectChoice() {
 		return correctChoice;
 	}
 

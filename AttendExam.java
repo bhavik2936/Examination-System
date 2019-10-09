@@ -22,9 +22,11 @@ public class AttendExam implements Serializable {
 		int choosePaper;
 
 		System.out.println(papers);
+		System.out.println("Press 0 NOT to choose any paper");
 		System.out.println("Choose from available Papers: ");
 		choosePaper = sc.nextInt();
-		giveExam(choosePaper - 1);
+		if (choosePaper > 0)
+			giveExam(choosePaper - 1);
 	}
 
 	// to attend exam of particular paper by One-by-One questions

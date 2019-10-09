@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -27,12 +28,14 @@ public class ExamSetter {
 		if (ch == 'Y' || ch == 'y') {
 			ObjectInputStream objectInputStream = null;
 			FileInputStream fileInputStream = null;
+
 			String fileName = "./AdminPapers.dat";
 			ListOfPapers examPapers;
 
 			try {
 				fileInputStream = new FileInputStream(fileName);
 				objectInputStream = new ObjectInputStream(fileInputStream);
+
 				examPapers = (ListOfPapers) objectInputStream.readObject();
 				papers.resetPapers(examPapers);
 				return true;
@@ -44,8 +47,8 @@ public class ExamSetter {
 				e.printStackTrace();
 			} finally {
 				try {
-					fileInputStream.close();
 					objectInputStream.close();
+					fileInputStream.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -56,7 +59,57 @@ public class ExamSetter {
 		}
 	}
 
-	// save changes permanently
+	// append changes with current changes
+	boolean appendChanges() {
+		FileInputStream fileInputStream = null;
+		ObjectInputStream objectInputStream = null;
+		FileOutputStream fileOutputStream = null;
+		ObjectOutputStream objectOutputStream = null;
+
+		ListOfPapers examPapers = null;
+		String adminFileName = "./AdminPapers.dat";
+		String clientFileName = "./QuestionPapers.dat";
+
+		try {
+			fileInputStream = new FileInputStream(adminFileName);
+			objectInputStream = new ObjectInputStream(fileInputStream);
+
+			if (new File(adminFileName).exists() && new File(clientFileName).exists()) {
+				examPapers = (ListOfPapers) objectInputStream.readObject();
+
+				objectInputStream.close();
+				fileInputStream.close();
+			}
+			examPapers.addPapers(papers);
+			fileOutputStream = new FileOutputStream(adminFileName);
+			objectOutputStream = new ObjectOutputStream(fileOutputStream);
+			objectOutputStream.writeObject(examPapers);
+
+			objectOutputStream.close();
+			fileOutputStream.close();
+
+			fileOutputStream = new FileOutputStream(clientFileName);
+			objectOutputStream = new ObjectOutputStream(fileOutputStream);
+			objectOutputStream.writeObject(examPapers.getClientPaper());
+			return true;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				objectOutputStream.close();
+				fileOutputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	// save changes by overriding current changes
 	boolean commitChanges() {
 		Scanner sc = new Scanner(System.in);
 
@@ -68,6 +121,7 @@ public class ExamSetter {
 		if (ch == 'Y' || ch == 'y') {
 			FileOutputStream fileOutputStream = null;
 			ObjectOutputStream objectOutputStream = null;
+
 			String adminFileName = "./AdminPapers.dat";
 			String clientFileName = "./QuestionPapers.dat";
 
@@ -75,9 +129,9 @@ public class ExamSetter {
 				fileOutputStream = new FileOutputStream(adminFileName);
 				objectOutputStream = new ObjectOutputStream(fileOutputStream);
 				objectOutputStream.writeObject(papers);
-				
-				fileOutputStream.close();
+
 				objectOutputStream.close();
+				fileOutputStream.close();
 
 				fileOutputStream = new FileOutputStream(clientFileName);
 				objectOutputStream = new ObjectOutputStream(fileOutputStream);
@@ -117,7 +171,8 @@ public class ExamSetter {
 			System.out.println("Press 4 to view full Question Paper");
 //			System.out.println("Press 5 to edit Question Paper");
 			System.out.println("Press 6 to Load Previous Changes");
-			System.out.println("Press 7 to Commit Changes");
+			System.out.println("Press 7 to Append Changes");
+			System.out.println("Press 8 to Commit Changes (Overriding Current Changes)");
 
 			System.out.println("Press 0 to exit !");
 			System.out.println("Enter your choice: ");
@@ -130,7 +185,7 @@ public class ExamSetter {
 				papers.addPaper(new ExamPaper(sc.nextLine()));
 				break;
 			case 2:
-				System.out.println(this);
+				System.out.println(papers);
 				System.out.println("Enter which question Paper to remove: ");
 				removeIndex = sc.nextInt();
 				papers.removePaper(removeIndex - 1);
@@ -146,9 +201,11 @@ public class ExamSetter {
 			case 4:
 				if (papers.getCountOfPapers() > 0) {
 					System.out.println(papers);
+					System.out.println("Press 0 NOT to choose any paper");
 					System.out.println("Enter which question Paper to view: ");
 					viewIndex = sc.nextInt();
-					System.out.println(papers.getPaper(viewIndex - 1));
+					if (viewIndex > 0)
+						System.out.println(papers.getPaper(viewIndex - 1));
 				} else {
 					System.out.println("No Question Paper Exists till now !");
 				}
@@ -162,6 +219,12 @@ public class ExamSetter {
 					System.out.println("Loading Failed !");
 				break;
 			case 7:
+				if (appendChanges())
+					System.out.println("Appended changes Sucessfully !");
+				else
+					System.out.println("Changes Appendation Failed !");
+				break;
+			case 8:
 				if (commitChanges())
 					System.out.println("Committed changes Sucessfully !");
 				else

@@ -25,6 +25,13 @@ public class ListOfPapers extends ExamPaper implements Serializable {
 		return setOfPapers.size();
 	}
 
+	// add multiple Papers
+	void addPapers(ListOfPapers examPapers) {
+		for (ExamPaper examPaper : examPapers.setOfPapers) {
+			setOfPapers.add(examPaper);
+		}
+	}
+
 	// add Paper as an Object
 	void addPaper(ExamPaper examPaper) {
 		setOfPapers.add(examPaper);
