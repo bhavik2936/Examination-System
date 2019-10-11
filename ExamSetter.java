@@ -5,11 +5,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class ExamSetter {
 
-	ListOfPapers papers;
+	private ListOfPapers papers;
 
 	// Default Constructor
 	public ExamSetter() {
@@ -182,7 +183,7 @@ public class ExamSetter {
 			case 1:
 				System.out.println("Enter Exam Paper Name: ");
 				sc.skip("[\\r\\n]+");
-				papers.addPaper(new ExamPaper(sc.nextLine()));
+				papers.addPaper(new QuestionPaper(sc.nextLine()));
 				break;
 			case 2:
 				System.out.println(papers);
@@ -241,6 +242,15 @@ public class ExamSetter {
 
 	public static void main(String[] args) {
 
-		new ExamSetter().serve();
+		ExamSetter examSetter = new ExamSetter();
+		try {
+			examSetter.serve();
+		} catch (InputMismatchException e) {
+			System.out.println("Input mismatching !");
+			System.out.println("Please try again !");
+			examSetter.serve();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

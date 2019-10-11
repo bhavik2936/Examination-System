@@ -8,51 +8,21 @@ import java.util.Vector;
 
 public class AttendExam implements Serializable {
 
-	ListOfPapers papers;
+	private ListOfPapers papers;
 
 	// Default Constructor
 	public AttendExam() {
 		papers = new ListOfPapers();
 		loadPapers();
 	}
-
-	// to choose which exam paper to attend
-	public void chooseExamPaper() {
-		Scanner sc = new Scanner(System.in);
-		int choosePaper;
-
-		System.out.println(papers);
-		System.out.println("Press 0 NOT to choose any paper");
-		System.out.println("Choose from available Papers: ");
-		choosePaper = sc.nextInt();
-		if (choosePaper > 0)
-			giveExam(choosePaper - 1);
-	}
-
-	// to attend exam of particular paper by One-by-One questions
-	public void giveExam(int paperNumber) {
-		ExamPaper paper = papers.getPaper(paperNumber);
-		Vector<Integer> answers = new Vector<Integer>();
-		Scanner sc = new Scanner(System.in);
-		int answer;
-
-		for (int i = 0; i < paper.getQuestionPaperSize(); i++) {
-			System.out.println("Que " + (i + 1) + ". " + paper.getQuestion(i));
-			System.out.println("Enter your Answer: ");
-			answer = sc.nextInt();
-			answers.add(answer);
-		}
-		answer = paper.checkPaper(answers);
-		System.out.println("Your score is: " + answer);
-	}
-
+	
 	// loads the list of exam papers
-	boolean loadPapers() {
+	public boolean loadPapers() {
 		ObjectInputStream objectInputStream = null;
 		FileInputStream fileInputStream = null;
 		String fileName = "./QuestionPapers.dat";
 		ListOfPapers examPapers;
-
+		
 		try {
 			fileInputStream = new FileInputStream(fileName);
 			objectInputStream = new ObjectInputStream(fileInputStream);
@@ -74,6 +44,36 @@ public class AttendExam implements Serializable {
 			}
 		}
 		return false;
+	}
+
+	// to choose which exam paper to attend
+	public void chooseExamPaper() {
+		Scanner sc = new Scanner(System.in);
+		int choosePaper;
+
+		System.out.println(papers);
+		System.out.println("Press 0 NOT to choose any paper");
+		System.out.println("Choose from available Papers: ");
+		choosePaper = sc.nextInt();
+		if (choosePaper > 0)
+			giveExam(choosePaper - 1);
+	}
+
+	// to attend exam of particular paper by One-by-One questions
+	public void giveExam(int paperNumber) {
+		QuestionPaper paper = papers.getPaper(paperNumber);
+		Vector<Integer> answers = new Vector<Integer>();
+		Scanner sc = new Scanner(System.in);
+		int answer;
+
+		for (int i = 0; i < paper.getQuestionPaperSize(); i++) {
+			System.out.println("Que " + (i + 1) + ". " + paper.getQuestion(i));
+			System.out.println("Enter your Answer: ");
+			answer = sc.nextInt();
+			answers.add(answer);
+		}
+		answer = paper.checkPaper(answers);
+		System.out.println("Your score is: " + answer);
 	}
 
 	// Main Serving Method

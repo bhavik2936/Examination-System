@@ -1,10 +1,10 @@
 import java.io.Serializable;
 import java.util.Vector;
 
-public class ListOfPapers extends ExamPaper implements Serializable {
+public class ListOfPapers extends QuestionPaper implements Serializable {
 
 	private static final long serialVersionUID = 5940166290730324489L;
-	private Vector<ExamPaper> setOfPapers = new Vector<ExamPaper>();
+	private Vector<QuestionPaper> setOfPapers = new Vector<QuestionPaper>();
 
 	// Default Constructor
 	public ListOfPapers() {
@@ -27,13 +27,13 @@ public class ListOfPapers extends ExamPaper implements Serializable {
 
 	// add multiple Papers
 	void addPapers(ListOfPapers examPapers) {
-		for (ExamPaper examPaper : examPapers.setOfPapers) {
+		for (QuestionPaper examPaper : examPapers.setOfPapers) {
 			setOfPapers.add(examPaper);
 		}
 	}
 
 	// add Paper as an Object
-	void addPaper(ExamPaper examPaper) {
+	void addPaper(QuestionPaper examPaper) {
 		setOfPapers.add(examPaper);
 	}
 
@@ -43,7 +43,7 @@ public class ListOfPapers extends ExamPaper implements Serializable {
 	}
 
 	// to get particular Question Paper
-	public ExamPaper getPaper(int index) {
+	public QuestionPaper getPaper(int index) {
 		return (setOfPapers.get(index));
 	}
 
