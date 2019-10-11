@@ -14,7 +14,7 @@ public class Server {
 	private Socket s = null;
 	private ObjectOutputStream objos = null;
 	private int port = 5000;
-	
+
 	// returns port
 	String getPort() {
 		return Integer.toString(port);
@@ -57,7 +57,7 @@ public class Server {
 		Server server = new Server();
 
 		try {
-			if (args[0] != server.getPort())
+			if (args.length == 0)
 				server.startServer();
 			server.liveServer();
 		} catch (BindException e) {
