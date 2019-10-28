@@ -15,19 +15,19 @@ public class AttendExam implements Serializable {
 		papers = new ListOfPapers();
 		loadPapers();
 	}
-	
+
 	// loads the list of exam papers
 	public boolean loadPapers() {
 		ObjectInputStream objectInputStream = null;
 		FileInputStream fileInputStream = null;
 		String fileName = "./QuestionPapers.dat";
 		ListOfPapers examPapers;
-		
+
 		try {
 			fileInputStream = new FileInputStream(fileName);
 			objectInputStream = new ObjectInputStream(fileInputStream);
 			examPapers = (ListOfPapers) objectInputStream.readObject();
-			papers.resetPapers(examPapers);
+			papers.resetClientPapers(examPapers);
 			return true;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -40,6 +40,8 @@ public class AttendExam implements Serializable {
 				fileInputStream.close();
 				objectInputStream.close();
 			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

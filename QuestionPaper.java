@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -27,7 +28,6 @@ public class QuestionPaper extends Question implements Serializable {
 	}
 
 	// Prints Question Paper Directly
-	// Under Construction
 	@Override
 	public String toString() {
 		StringBuffer str = new StringBuffer(paperName + "\n\n");
@@ -122,6 +122,25 @@ public class QuestionPaper extends Question implements Serializable {
 	// Under Construction
 	void removeQuestion(int index) {
 		setOfQuestions.remove(index - 1);
+	}
+
+	// shuffle Questions of Paper
+	void shufflePaper() {
+		Random rand = new Random();
+		Vector<Integer> questionVector = new Vector<Integer>();
+		QuestionPaper questionPaper = new QuestionPaper();
+
+		do {
+			int paperIndex = rand.nextInt(setOfQuestions.size());
+			if (!questionVector.contains(paperIndex)) {
+				questionVector.add(paperIndex);
+			}
+		} while (questionVector.size() < setOfQuestions.size());
+
+		for (int questionIndex : questionVector) {
+			questionPaper.addQuestion(setOfQuestions.get(questionIndex));
+		}
+		this.setOfQuestions = questionPaper.setOfQuestions;
 	}
 
 	// to take and verify the answers

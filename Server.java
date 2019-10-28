@@ -4,8 +4,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Date;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
@@ -30,15 +28,16 @@ public class Server {
 
 	// responsible for client connection
 	private boolean acceptClient() throws IOException {
-		System.out.println("Waiting for client to connect from " + new Date());
+		System.out.println();
+		System.out.println("Waiting for client to connect since\t" + new Date());
 		s = serverSocket.accept();
-		System.out.println("New client connected at " + new Date());
+		System.out.println("New client connected at\t\t\t" + new Date());
 		return true;
 	}
 
 	// responsible for distributing the paper
 	private boolean serveClient() throws IOException {
-		System.out.println("Atteding to distribute paper at" + new Date());
+		System.out.println("Atteding to distribute paper at\t\t" + new Date());
 		objos = new ObjectOutputStream(s.getOutputStream());
 		AttendExam attendExam = new AttendExam();
 		objos.writeObject(attendExam);
@@ -46,7 +45,7 @@ public class Server {
 	}
 
 	// keeps the server live
-	public void liveServer() throws IOException {
+	public void liveServer() throws IOException, InterruptedException {
 		while (true) {
 			acceptClient();
 			serveClient();
@@ -68,6 +67,8 @@ public class Server {
 			main(args);
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (InterruptedException e) {
+			System.out.println("Exiting at... " + new Date());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

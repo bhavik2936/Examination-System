@@ -38,7 +38,7 @@ public class ExamSetter {
 				objectInputStream = new ObjectInputStream(fileInputStream);
 
 				examPapers = (ListOfPapers) objectInputStream.readObject();
-				papers.resetPapers(examPapers);
+				papers.resetExamSetterPapers(examPapers);
 				return true;
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -51,6 +51,8 @@ public class ExamSetter {
 					objectInputStream.close();
 					fileInputStream.close();
 				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -104,6 +106,8 @@ public class ExamSetter {
 				objectOutputStream.close();
 				fileOutputStream.close();
 			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

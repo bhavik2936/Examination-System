@@ -3,7 +3,7 @@ import java.util.Vector;
 
 public class ListOfPapers extends QuestionPaper implements Serializable {
 
-	private static final long serialVersionUID = 5940166290730324489L;
+	private static final long serialVersionUID = 1L;
 	private Vector<QuestionPaper> setOfPapers = new Vector<QuestionPaper>();
 
 	// Default Constructor
@@ -47,8 +47,21 @@ public class ListOfPapers extends QuestionPaper implements Serializable {
 		return (setOfPapers.get(index));
 	}
 
+	// to shuffle questions of every paper
+	private void shufflePapers() {
+		for (QuestionPaper questionPaper : setOfPapers) {
+			questionPaper.shufflePaper();
+		}
+	}
+
 	// reset papers while loading previous changes
-	protected void resetPapers(ListOfPapers examPapers) {
+	protected void resetExamSetterPapers(ListOfPapers examPapers) {
+		this.setOfPapers = examPapers.setOfPapers;
+	}
+
+	// reset and shuffle clients' papers only while loading previous changes
+	protected void resetClientPapers(ListOfPapers examPapers) {
+		examPapers.shufflePapers();
 		this.setOfPapers = examPapers.setOfPapers;
 	}
 
