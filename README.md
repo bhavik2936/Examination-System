@@ -11,5 +11,5 @@ To give Exam Paper by Setting it and Broadcasting.
 - To attend exam use release `Client-Examination-System.jar`
 
 ## How to run
-- to run any `jar` file the syntax is `java -jar [jar-file-name.jar]`.
-  - for example, `jar` file name is `sample.jar`, the command should be `java -jar sample.jar`.
+- To run any `jar` file the syntax is `java -jar [jar-file-name.jar]`.
+  - For example, `jar` file name is `sample.jar`, the command should be `java -jar sample.jar`.
